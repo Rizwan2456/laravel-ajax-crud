@@ -97,7 +97,6 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         //
-
         return view('update', compact('student'));
     }
 
@@ -112,25 +111,7 @@ class StudentController extends Controller
     {
         //
 
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email'
-        ]);
-        $student->name = $request->name;
-        $student->email = $request->email;
-
-        if ($request->hasfile('image')) {
-            $path = 'image/' . $student->image;
-            if (File::exists($path)) {
-                File::delete($path);
-            }
-            $img = $request->file('image');
-            $imgName = time() . "." . $img->getClientOriginalExtension();
-            $img->move('image/', $imgName);
-            $student->image = $imgName;
-        }
-        $student->update();
-        return redirect(Route('students.index'))->with('status', 'record successfully upadted');
+        
     }
 
     /**
@@ -150,6 +131,6 @@ class StudentController extends Controller
         return response()->json([
             'message'=>'record successfully deleted',
         ]);
-        // return redirect(Route('students.index'))->with('status', 'record successfully deleted');
+        
     }
 }
