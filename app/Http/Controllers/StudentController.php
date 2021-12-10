@@ -32,11 +32,6 @@ class StudentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
-        //   return view('insert');
-    }
 
     /**
      * Store a newly created resource in storage.
