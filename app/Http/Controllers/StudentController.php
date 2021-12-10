@@ -49,7 +49,7 @@ class StudentController extends Controller
         //validation
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:students',
             'image' => 'required',
         ]);
         if ($validator->fails()) {
@@ -97,7 +97,9 @@ class StudentController extends Controller
     public function edit(Student $student)
     {
         //
-        return view('update', compact('student'));
+        return response()->json([
+            'student'=> $student
+        ]);
     }
 
     /**
@@ -110,8 +112,34 @@ class StudentController extends Controller
     public function update(Request $request, Student $student)
     {
         //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:students',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 400,
+                'message' => $validator->getMessageBag()
+            ]);
+        }
+        $student->name = $request->name;
+        $student->email = $request->email;
 
-        
+        if ($request->hasfile('image')) {
+            $path = 'image/' . $student->image;
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+            $img = $request->file('image');
+            $imgName = time() . "." . $img->getClientOriginalExtension();
+            $img->move('image/', $imgName);
+            $student->image = $imgName;
+        }
+        $student->update();
+        return response()->json([
+            'status' => 200,
+            'message' => 'record successfully updated'
+        ]);
     }
 
     /**
